@@ -11,7 +11,6 @@ import {
 let alumnos = [];
 let alumnoActual = null;
 let claseActual = "";
-const CONTRASENYA = "profe123"; // canvia-la per la teva contrasenya
 
 // 🔹 Cargar lista de alumnos de una clase
 async function cargarAlumnos(clase) {
@@ -149,9 +148,10 @@ function mostrarTablaCercanos() {
   alumnos.sort((a, b) => b.puntosTotales - a.puntosTotales);
 
   const idx = alumnos.findIndex((a) => a.id === alumnoActual.id);
-  const inicio = Math.max(0, idx - 2);
+  let inicio = Math.max(0, idx - 2);
   const fin = Math.min(alumnos.length - 1, idx + 2);
   const sublista = alumnos.slice(inicio, fin + 1);
+
   const cuerpo = document.getElementById("cuerpoTabla");
   cuerpo.innerHTML = "";
 
@@ -160,6 +160,7 @@ function mostrarTablaCercanos() {
       <tr class="${
         a.id === alumnoActual.id ? "bg-yellow-50" : "hover:bg-gray-50"
       }">
+        <td class="px-4 py-2 text-center font-bold">${inicio + 1}</td>
         <td class="px-4 py-2 font-medium text-gray-700">${a.nombre}</td>
         <td class="px-4 py-2 text-center text-green-600 font-semibold">${
           a.bienDeberes || 0
@@ -173,8 +174,17 @@ function mostrarTablaCercanos() {
         <td class="px-4 py-2 text-center text-red-600 font-semibold">${
           a.malClase || 0
         }</td>
+        <td class="px-4 py-2 text-center font-semibold ${
+          a.bienDeberes * 3 - a.malDeberes * 3 + a.bienClase - a.malClase >= 20
+            ? "text-green-600"
+            : "text-red-600"
+        }">  ${
+      a.bienDeberes * 3 - a.malDeberes * 3 + a.bienClase - a.malClase || 0
+    }</td>
       </tr>`;
     cuerpo.innerHTML += fila;
+    inicio += 1;
+    console.log(inicio);
   });
 }
 
@@ -227,29 +237,9 @@ function mostrarEmoji(resultado) {
 document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("btnCargarClase").addEventListener("click", () => {
     const clase = document.getElementById("claseSelect").value;
-    if (!clase) return alert("Selecciona una classe");
+    if (!clase) return alert("Selecciona una clase");
     claseActual = clase;
     cargarAlumnos(clase);
-  });
-
-  document.getElementById("btnLogin").addEventListener("click", () => {
-    const valor = document.getElementById("passwordInput").value.trim();
-    if (valor === CONTRASENYA) {
-      // Mostrar el contingut principal i amagar el login
-      document.getElementById("loginPanel").classList.add("hidden");
-      document.getElementById("mainContent").classList.remove("hidden");
-    } else {
-      document.getElementById("loginError").classList.remove("hidden");
-    }
-  });
-
-  const inputPassword = document.getElementById("passwordInput");
-  const btnLogin = document.getElementById("btnLogin");
-
-  inputPassword.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      btnLogin.click();
-    }
   });
 
   document.getElementById("btnElegir").addEventListener("click", elegirAlumno);
@@ -265,10 +255,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("btnMalClase")
     .addEventListener("click", () => registrar("clase", "mal"));
-
-  /*   document.getElementById("toggleDark").addEventListener("click", () => {
-    document.documentElement.classList.toggle("dark");
-  }); */
 
   // Al iniciar, cargar lista de clases
   await cargarClases();
