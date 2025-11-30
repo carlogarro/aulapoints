@@ -176,7 +176,7 @@ function mostrarTablaCercanos() {
           a.malClase || 0
         }</td>
         <td class="px-4 py-2 text-center font-semibold ${
-          a.bienDeberes * 3 - a.malDeberes * 3 + a.bienClase - a.malClase >= 20
+          a.bienDeberes * 3 - a.malDeberes * 3 + a.bienClase - a.malClase >= 10
             ? "text-green-600"
             : "text-red-600"
         }">  ${
